@@ -4,58 +4,86 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WebP to PNG Converter</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
-    /* Basic Styling */
-    body {
-      font-family: Arial, sans-serif;
+    /* Base Styling */
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
     }
 
     .container {
       text-align: center;
       background: white;
       padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
       width: 100%;
-      max-width: 400px;
+      max-width: 450px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
     }
 
     h1 {
-      color: #333;
-      font-size: 24px;
+      font-size: 28px;
+      font-weight: 600;
+      color: #444;
       margin-bottom: 20px;
     }
 
     input[type="file"] {
       margin-bottom: 20px;
-      padding: 10px;
+      padding: 12px;
       border: 2px solid #ddd;
-      border-radius: 10px;
+      border-radius: 12px;
       width: 100%;
       font-size: 16px;
       cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="file"]:hover {
+      border-color: #aaa;
     }
 
     button {
-      background-color: #6200ea;
+      background: linear-gradient(135deg, #6200ea, #3700b3);
       color: white;
       border: none;
-      padding: 12px 24px;
+      padding: 14px 28px;
       font-size: 16px;
-      border-radius: 10px;
+      font-weight: 500;
+      border-radius: 12px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background 0.3s ease, transform 0.3s ease;
     }
 
     button:hover {
-      background-color: #3700b3;
+      background: linear-gradient(135deg, #3700b3, #6200ea);
+      transform: scale(1.05);
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
     }
 
     .result {
@@ -65,17 +93,19 @@
     .result a {
       display: inline-block;
       margin-top: 15px;
-      padding: 10px 20px;
-      background-color: #03dac6;
-      color: #333;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #03dac6, #018786);
+      color: white;
       text-decoration: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 16px;
-      transition: background-color 0.3s ease;
+      font-weight: 500;
+      transition: background 0.3s ease, transform 0.3s ease;
     }
 
     .result a:hover {
-      background-color: #018786;
+      background: linear-gradient(135deg, #018786, #03dac6);
+      transform: scale(1.05);
     }
   </style>
 </head>
@@ -83,7 +113,7 @@
   <div class="container">
     <h1>WebP to PNG Converter</h1>
     <input type="file" id="webpFile" accept=".webp" />
-    <button onclick="convertWebPtoPNG()">Convert to PNG</button>
+    <button onclick="convertWebPtoPNG()" id="convertButton">Convert to PNG</button>
 
     <div class="result" id="result"></div>
   </div>
