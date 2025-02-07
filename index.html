@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP to PNG Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            text-align: center;
+        }
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebP to PNG Converter</h1>
+    <input type="file" id="webpFile" accept=".webp" />
+    <button onclick="convertWebPtoPNG()">Convert to PNG</button>
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function convertWebPtoPNG() {
+            const fileInput = document.getElementById('webpFile');
+            const resultDiv = document.getElementById('result');
+
+            if (!fileInput.files.length) {
+                alert('Please upload a WebP file.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (!file.type.includes('image/webp')) {
+                alert('Please upload a valid WebP file.');
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+
+                    ctx.drawImage(img, 0, 0);
+
+                    // Convert the canvas image to PNG
+                    const pngDataUrl = canvas.toDataURL('image/png');
+
+                    // Create a download link for the PNG file
+                    const a = document.createElement('a');
+                    a.href = pngDataUrl;
+                    a.download = file.name.replace('.webp', '.png');
+                    a.textContent = 'Download PNG';
+
+                    // Clear previous results
+                    resultDiv.innerHTML = '';
+                    resultDiv.appendChild(a);
+                };
+            };
+
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+</html>
