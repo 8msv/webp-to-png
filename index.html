@@ -33,7 +33,7 @@
       border-radius: 20px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
       width: 100%;
-      max-width: 450px;
+      max-width: 500px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -90,20 +90,29 @@
       margin-top: 20px;
     }
 
-    .result a {
+    .result-item {
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .result-item a {
       display: inline-block;
-      margin-top: 15px;
-      padding: 12px 24px;
+      padding: 8px 16px;
       background: linear-gradient(135deg, #03dac6, #018786);
       color: white;
       text-decoration: none;
-      border-radius: 12px;
-      font-size: 16px;
+      border-radius: 8px;
+      font-size: 14px;
       font-weight: 500;
       transition: background 0.3s ease, transform 0.3s ease;
     }
 
-    .result a:hover {
+    .result-item a:hover {
       background: linear-gradient(135deg, #018786, #03dac6);
       transform: scale(1.05);
     }
@@ -112,59 +121,70 @@
 <body>
   <div class="container">
     <h1>WebP to PNG Converter</h1>
-    <input type="file" id="webpFile" accept=".webp" />
-    <button onclick="convertWebPtoPNG()" id="convertButton">Convert to PNG</button>
+    <input type="file" id="webpFiles" accept=".webp" multiple />
+    <button onclick="convertWebPtoPNG()">Convert to PNG</button>
 
     <div class="result" id="result"></div>
   </div>
 
   <script>
     function convertWebPtoPNG() {
-      const fileInput = document.getElementById('webpFile');
+      const fileInput = document.getElementById('webpFiles');
       const resultDiv = document.getElementById('result');
 
       if (!fileInput.files.length) {
-        alert('Please upload a WebP file.');
+        alert('Please upload one or more WebP files.');
         return;
       }
 
-      const file = fileInput.files[0];
-      if (!file.type.includes('image/webp')) {
-        alert('Please upload a valid WebP file.');
-        return;
-      }
+      // Clear previous results
+      resultDiv.innerHTML = '';
 
-      const reader = new FileReader();
+      // Loop through all selected files
+      Array.from(fileInput.files).forEach((file) => {
+        if (!file.type.includes('image/webp')) {
+          alert(`"${file.name}" is not a valid WebP file. Skipping.`);
+          return;
+        }
 
-      reader.onload = function (event) {
-        const img = new Image();
-        img.src = event.target.result;
+        const reader = new FileReader();
 
-        img.onload = function () {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
+        reader.onload = function (event) {
+          const img = new Image();
+          img.src = event.target.result;
 
-          canvas.width = img.width;
-          canvas.height = img.height;
+          img.onload = function () {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
 
-          ctx.drawImage(img, 0, 0);
+            canvas.width = img.width;
+            canvas.height = img.height;
 
-          // Convert the canvas image to PNG
-          const pngDataUrl = canvas.toDataURL('image/png');
+            ctx.drawImage(img, 0, 0);
 
-          // Create a download link for the PNG file
-          const a = document.createElement('a');
-          a.href = pngDataUrl;
-          a.download = file.name.replace('.webp', '.png');
-          a.textContent = 'Download PNG';
+            // Convert the canvas image to PNG
+            const pngDataUrl = canvas.toDataURL('image/png');
 
-          // Clear previous results
-          resultDiv.innerHTML = '';
-          resultDiv.appendChild(a);
+            // Create a download link for the PNG file
+            const resultItem = document.createElement('div');
+            resultItem.className = 'result-item';
+
+            const fileNameSpan = document.createElement('span');
+            fileNameSpan.textContent = file.name.replace('.webp', '.png');
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = pngDataUrl;
+            downloadLink.download = file.name.replace('.webp', '.png');
+            downloadLink.textContent = 'Download';
+
+            resultItem.appendChild(fileNameSpan);
+            resultItem.appendChild(downloadLink);
+            resultDiv.appendChild(resultItem);
+          };
         };
-      };
 
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      });
     }
   </script>
 </body>
